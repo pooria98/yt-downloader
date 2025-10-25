@@ -15,7 +15,7 @@ A simple and modern GUI video downloader built with [yt-dlp](https://github.com/
 
 ### Executable
 
-Just download the zip file from releases and simply run video_downloader.exe
+Just download the zip file from [releases](https://github.com/pooria98/yt-downloader/releases/tag/v1.0) and simply run video_downloader.exe
 
 ### Manual usage with python
 

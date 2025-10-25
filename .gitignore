@@ -1,0 +1,28 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+
+# Virtual environment
+venv/
+.env/
+env/
+
+# Build outputs
+build/
+dist/
+*.spec
+
+# Config and cache
+config.json
+*.log
+*.tmp
+
+# System files
+.DS_Store
+Thumbs.db
+
+# ffmpeg binary (too large for GitHub)
+ffmpeg.exe
+ffprobe.exe

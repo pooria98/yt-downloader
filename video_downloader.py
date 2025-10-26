@@ -1,4 +1,5 @@
 import os
+import subprocess, sys
 import json
 import threading
 import yt_dlp
@@ -6,6 +7,17 @@ import customtkinter as ctk
 from tkinter import filedialog, messagebox
 
 CONFIG_FILE = "config.json"
+
+
+# ---------------- UPDATE ----------------
+def update_dependencies():
+    try:
+        subprocess.run(
+            [sys.executable, "-m", "pip", "install", "--upgrade", "yt-dlp"], check=True
+        )
+        messagebox.showinfo("Update", "yt-dlp updated successfully!")
+    except Exception as e:
+        messagebox.showerror("Error", f"Update failed:\n{e}")
 
 
 # ---------------- CONFIG ----------------
@@ -85,6 +97,7 @@ def run_downloads(urls, output_path, quality, output_format):
             "format": quality_formats[quality] if not is_audio else "bestaudio/best",
             "merge_output_format": "mp4" if output_format == "MP4" else None,
             "postprocessors": [],
+            "embedchapters": True,
         }
 
         if is_audio:
@@ -98,6 +111,16 @@ def run_downloads(urls, output_path, quality, output_format):
         elif output_format == "MP4":
             ydl_opts["postprocessors"].append(
                 {"key": "FFmpegVideoConvertor", "preferedformat": "mp4"}
+            )
+
+        if download_subs.get():
+            ydl_opts.update(
+                {
+                    "writeautomaticsub": True,
+                    "writesubtitles": True,
+                    "subtitleslangs": ["en"],
+                    "embedsubtitles": True,
+                }
             )
 
         with yt_dlp.YoutubeDL(ydl_opts) as ydl:
@@ -119,7 +142,7 @@ ctk.set_default_color_theme("blue")
 
 root = ctk.CTk()
 root.title("🎥 Advanced Video Downloader")
-root.geometry("600x520")
+root.geometry("600x630")
 root.resizable(False, False)
 
 ctk.CTkLabel(root, text="Video URLs (one per line):", anchor="w").pack(pady=(10, 5))
@@ -136,7 +159,7 @@ ctk.CTkButton(path_frame, text="Browse", command=select_folder, width=80).pack(
     side="left"
 )
 
-ctk.CTkLabel(root, text="Quality:", anchor="w").pack(pady=(10, 5))
+ctk.CTkLabel(root, text="Quality:", anchor="w").pack(pady=(10, 0))
 quality_formats = {
     "Best Available": "bestvideo+bestaudio/best",
     "1080p": "bestvideo[height<=1080]+bestaudio/best[height<=1080]",
@@ -148,15 +171,26 @@ quality_dropdown = ctk.CTkOptionMenu(root, values=list(quality_formats.keys()))
 quality_dropdown.set("Best Available")
 quality_dropdown.pack(pady=5)
 
-ctk.CTkLabel(root, text="Output Format:", anchor="w").pack(pady=(10, 5))
+ctk.CTkLabel(root, text="Output Format:", anchor="w").pack(pady=(10, 0))
 format_dropdown = ctk.CTkOptionMenu(root, values=["MP4", "WebM", "MP3"])
 format_dropdown.set("MP4")
 format_dropdown.pack(pady=5)
 
+download_subs = ctk.BooleanVar()
+
+subs_checkbox = ctk.CTkCheckBox(root, text="Download subtitles", variable=download_subs)
+subs_checkbox.pack(pady=20)
+
+
 download_button = ctk.CTkButton(
-    root, text="⬇️  Start Download", command=download_videos, width=220, height=40
+    root,
+    text="⬇️  Start Download",
+    command=download_videos,
+    width=500,
+    height=50,
+    fg_color="seagreen",
 )
-download_button.pack(pady=15)
+download_button.pack(pady=(0, 15))
 
 progress_bar = ctk.CTkProgressBar(root, width=500)
 progress_bar.set(0)
@@ -164,5 +198,11 @@ progress_bar.pack(pady=5)
 
 progress_label = ctk.CTkLabel(root, text="")
 progress_label.pack(pady=5)
+
+update_button = ctk.CTkButton(
+    root, text="Update yt-dlp", command=update_dependencies, fg_color="darkslategray"
+)
+update_button.pack(padx=30, side="right")
+
 
 root.mainloop()

@@ -14,11 +14,11 @@ A simple GUI youtube downloader built with [yt-dlp](https://github.com/yt-dlp/yt
 
 ## 🚀 Installation
 
-### Executable
+### Executable (windows)
 
 Just download the zip file from [releases](https://github.com/pooria98/yt-downloader/releases/tag/v1.0) and simply run video_downloader.exe
 
-### Manual usage with python
+### Manual usage with python (cross platform)
 
 have python installed on your machine
 
